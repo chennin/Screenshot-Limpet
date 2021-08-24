@@ -1,6 +1,6 @@
 import os, sys
 from config import appname, config
-#from monitor import game_running
+from monitor import monitor
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent, LoggingEventHandler
 from watchdog.observers import Observer
 import tkinter as tk
@@ -87,7 +87,7 @@ def prefs_changed(cmdr, is_beta):
     config.set("AS_INPUT", this.in_loc.get())
     config.set("AS_OUTPUT", this.out_loc.get())
     stop_observer()
-    if check_all_dirs_exist():
+    if check_all_dirs_exist() and monitor.game_running():
       start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
@@ -97,7 +97,6 @@ def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
 
     if check_all_dirs_exist():
       update_status("")
-      start_observer()
 
     return (label, status)
 
@@ -111,6 +110,12 @@ def plugin_stop() -> None:
 def journal_entry( cmdr: str, is_beta: bool, system: str, station: str, entry: Dict[str, Any], state: Dict[str, Any]) -> None:
     global observer
     observer.join(0.1)
+    if entry['event'].lower() == 'shutdown' or monitor.game_running == False:
+      stop_observer()
+      update_status("Stopped")
+    elif entry['event'].lower() == 'startup':
+      start_observer()
+      update_status("Started")
 
 def dashboard_entry(cmdr: str, is_beta: bool, entry: Dict[str, Any]):
     global observer

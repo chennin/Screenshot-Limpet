@@ -1,4 +1,4 @@
-# Alpha release
+# Alpha release, not working yet
 
 This plugin watches an arbitrary directory, for example Nvidia Geforce Experience's Elite: Dangerous screenshot directory, for new images, and renames them and moves them in to your usual Elite: Dangerous screenshot directory.
 

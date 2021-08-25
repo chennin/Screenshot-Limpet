@@ -49,14 +49,16 @@ def check_dir_exists(directory):
     return os.path.isdir(directory)
 
 def check_all_dirs_exist():
-    message = ""
+    default = message = "Error:\n"
     for directory in [this.in_loc.get(), this.out_loc.get()]:
       if not check_dir_exists(directory):
         message += "Directory '{}' does not exist!\n".format(directory)
 	# Keep a multi-line message, but only log one error per directory checked
         logger.error(message.splitlines()[-1])
 
-    update_status(message)
+    if message != default:
+      update_status(message)
+
     return message == ""
 
 def plugin_start3(plugin_dir: str) -> str:
@@ -106,34 +108,34 @@ def start_observer():
 
 def stop_observer():
     global observer
-    logging.info("Stopping image observer")
+    logger.info("Stopping image observer")
     if observer is not None and observer.is_alive():
       observer.stop()
       observer.join()
     update_status("Stopped")
 
 def prefs_changed(cmdr, is_beta):
-    logger.info("Detected prefs change")
+    logger.debug("Detected prefs change")
     config.set("AS_INPUT", this.in_loc.get())
     config.set("AS_OUTPUT", this.out_loc.get())
     config.set("AS_DELORIG", this.del_orig.get())
     stop_observer()
-    if check_all_dirs_exist():# and monitor.game_running():
+    if check_all_dirs_exist() and monitor.game_running():
       start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
     global status
     label = tk.Label(parent, text="Any Screenshot")
     status = tk.Label(parent, text="")
-
-    if check_all_dirs_exist():
-      update_status("")
+    update_status("Loaded")
 
     return (label, status)
 
 def update_status(message) -> None:
     global status
-    status["text"] = message
+    logger.debug("Updating status text to: {}".format(message))
+    if not config.shutting_down:
+      status["text"] = message
 
 def plugin_stop() -> None:
     stop_observer()

@@ -29,12 +29,13 @@ class ImgHandler(PatternMatchingEventHandler):
         PatternMatchingEventHandler.__init__(self, patterns=['*.png', '*.jpg', '.bmp'], ignore_directories=True, case_sensitive=False)
 
     def on_created(self, event):
-        if event.src_path.lower().endswith('.png'):
+        if event.src_path.lower().endswith( ('.png', '.jpg') ) :
           logger.debug("New image detected {}".format(event.src_path))
+          suffix = event.src_path.lower()[-3:]
           date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
           number = 1
           while True:
-            newname = "{} {} ({}) {}.png".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
+            newname = "{} {} ({}) {}.{}".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}', suffix)
             newpath = "{}/{}".format(this.out_loc.get(), newname)
             if os.path.isfile(newpath):
               number += 1
@@ -47,7 +48,7 @@ class ImgHandler(PatternMatchingEventHandler):
             else:
               from shutil import copyfile
               copyfile(event.src_path, newpath)
-            this.message = "Successfully moved screenshot to:\n{}".format(newname)
+            this.message = "Successfully {} screenshot with new name:\n{}".format("moved" if this.del_orig.get() == "1" else "copied", newname)
           except Exception as e:
             this.message = "Error: {}".format(e)
             logger.error(e)

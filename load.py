@@ -5,6 +5,7 @@ from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 import tkinter as tk
 from tkinter import ttk
+from ttkHyperlinkLabel import HyperlinkLabel
 import myNotebook as nb
 from typing import Optional, Tuple, Dict, Any
 from datetime import datetime
@@ -13,6 +14,8 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
 this = sys.modules[__name__]
+VERSION = 0.8
+
 status: Optional[tk.Label]
 observer = None
 this.cmdr = "default-cmdr"
@@ -81,19 +84,23 @@ def plugin_prefs(parent, cmdr, is_beta):
     frame = nb.Frame(parent)
     frame.columnconfigure(3, weight=1)
 
+    HyperlinkLabel(frame, text=plugin_name, background=nb.Label().cget('background'), url='https://github.com/chennin/EDMC-Any-Screenshot', \
+      underline=True).grid(row=0, columnspan=2, padx=10, sticky=tk.W)
+    nb.Label(frame, text = 'Version {}'.format(VERSION)).grid(row=0, column=2, padx=10, sticky=tk.E)
+
     input_label = nb.Label(frame, text="Screenshot Directory")
-    input_label.grid(padx=10, row=0, column=0, sticky=tk.W)
+    input_label.grid(padx=10, row=2, column=0, sticky=tk.W)
 
     input_entry = nb.Entry(frame, textvariable=this.in_loc)
-    input_entry.grid(padx=10, row=0, column=1, columnspan=2, ipadx=60, sticky=tk.W)
+    input_entry.grid(padx=10, row=2, column=1, columnspan=2, ipadx=60, sticky=tk.W)
 
     output_label = nb.Label(frame, text="Output Directory")
-    output_label.grid(padx=10, row=1, column=0, sticky=tk.W)
+    output_label.grid(padx=10, row=3, column=0, sticky=tk.W)
 
     output_entry = nb.Entry(frame, textvariable=this.out_loc)
-    output_entry.grid(padx=10, row=1, column=1, columnspan=2, ipadx=60, sticky=tk.W)
+    output_entry.grid(padx=10, row=3, column=1, columnspan=2, ipadx=60, sticky=tk.W)
 
-    nb.Checkbutton(frame, text="Delete Original File", variable=this.del_orig).grid(padx=10, row=2, column=0, sticky=tk.W)
+    nb.Checkbutton(frame, text="Delete Original File", variable=this.del_orig).grid(padx=10, row=5, column=0, sticky=tk.W)
 
     return frame
 

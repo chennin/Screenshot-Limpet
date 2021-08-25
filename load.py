@@ -26,7 +26,7 @@ class ImgHandler(PatternMatchingEventHandler):
 
     def on_created(self, event):
         if event.src_path.lower().endswith('.png'):
-          logger.info("New image detected {}".format(event.src_path))
+          logger.debug("New image detected {}".format(event.src_path))
           date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
           number = 1
           while True:
@@ -35,7 +35,7 @@ class ImgHandler(PatternMatchingEventHandler):
               number += 1
             else:
               break
-          logger.info("New name is {}".format(newname))
+          logger.info("{} {} to {}".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newname))
           try:
             if this.del_orig.get() == "1":
               os.rename(event.src_path, newname)
@@ -108,8 +108,8 @@ def start_observer():
 
 def stop_observer():
     global observer
-    logger.info("Stopping image observer")
     if observer is not None and observer.is_alive():
+      logger.info("Stopping image observer")
       observer.stop()
       observer.join()
     update_status("Stopped")

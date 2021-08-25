@@ -34,7 +34,7 @@ class ImgHandler(PatternMatchingEventHandler):
           date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
           number = 1
           while True:
-            newname = "{} {} ({}) {}.png".format(this.out_loc.get(), this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
+            newname = "{} {} ({}) {}.png".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
             newpath = "{}/{}".format(this.out_loc.get(), newname)
             if os.path.isfile(newpath):
               number += 1
@@ -47,7 +47,7 @@ class ImgHandler(PatternMatchingEventHandler):
             else:
               from shutil import copyfile
               copyfile(event.src_path, newpath)
-            this.message = "Successfully moved {}".format(newname)
+            this.message = "Successfully moved screenshot to:\n{}".format(newname)
           except Exception as e:
             this.message = "Error: {}".format(e)
             logger.error(e)

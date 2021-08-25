@@ -16,7 +16,8 @@ logger = logging.getLogger(f'{appname}.{plugin_name}')
 this = sys.modules[__name__]
 VERSION = 0.8
 
-status: Optional[tk.Label]
+this.status: Optional[tk.Label]
+this.message = ""
 observer = None
 this.cmdr = "default-cmdr"
 this.system = "unknown-system"
@@ -33,20 +34,25 @@ class ImgHandler(PatternMatchingEventHandler):
           date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
           number = 1
           while True:
-            newname = "{}/{} {} ({}) {}.png".format(this.out_loc.get(), this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
-            if os.path.isfile(newname):
+            newname = "{} {} ({}) {}.png".format(this.out_loc.get(), this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
+            newpath = "{}/{}".format(this.out_loc.get(), newname)
+            if os.path.isfile(newpath):
               number += 1
             else:
               break
-          logger.info("{} '{}' to '{}'".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newname))
+          logger.info("{} '{}' to '{}'".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newpath))
           try:
             if this.del_orig.get() == "1":
-              os.rename(event.src_path, newname)
+              os.rename(event.src_path, newpath)
             else:
               from shutil import copyfile
-              copyfile(event.src_path, newname)
+              copyfile(event.src_path, newpath)
+            this.message = "Successfully moved {}".format(newname)
           except Exception as e:
+            this.message = "Error: {}".format(e)
             logger.error(e)
+          finally:
+            this.status.event_generate('<<AnySSStatus>>', when="tail")
 
 def check_dir_exists(directory):
     return os.path.isdir(directory)
@@ -60,7 +66,8 @@ def check_all_dirs_exist():
         logger.error(message.splitlines()[-1])
 
     if message != default:
-      update_status(message)
+      this.message = message
+      this.status.event_generate('<<AnySSStatus>>', when="tail")
 
     return message == ""
 
@@ -111,7 +118,8 @@ def start_observer():
     observer = Observer()
     observer.schedule(event_handler, this.in_loc.get(), recursive=False)
     observer.start()
-    update_status("Started")
+    this.message = "Started"
+    this.status.event_generate('<<AnySSStatus>>', when="tail")
 
 def stop_observer():
     global observer
@@ -119,7 +127,8 @@ def stop_observer():
       logger.info("Stopping image observer")
       observer.stop()
       observer.join()
-    update_status("Stopped")
+    this.message = "Stopped"
+    this.status.event_generate('<<AnySSStatus>>', when="tail")
 
 def prefs_changed(cmdr, is_beta):
     logger.debug("Detected prefs change")
@@ -133,18 +142,16 @@ def prefs_changed(cmdr, is_beta):
       start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
-    global status
     label = tk.Label(parent, text="Any Screenshot")
-    status = tk.Label(parent, text="")
-    update_status("Loaded")
+    this.status = tk.Label(parent, text="")
+    this.status.bind_all('<<AnySSStatus>>', update_status)
 
-    return (label, status)
+    return (label, this.status)
 
-def update_status(message) -> None:
-    global status
-    logger.debug("Updating status text to: {}".format(message))
+def update_status(event=None) -> None:
+    logger.debug("Updating status text to: {}".format(this.message))
     if not config.shutting_down:
-      status["text"] = message
+      this.status["text"] = this.message
 
 def plugin_stop() -> None:
     stop_observer()

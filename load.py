@@ -4,12 +4,12 @@ from monitor import monitor
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 import tkinter as tk
-from tkinter import ttk
 from ttkHyperlinkLabel import HyperlinkLabel
 import myNotebook as nb
 from typing import Optional, Tuple, Dict, Any
 from datetime import datetime
 import logging
+
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
@@ -38,7 +38,7 @@ class ImgHandler(PatternMatchingEventHandler):
               number += 1
             else:
               break
-          logger.info("{} {} to {}".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newname))
+          logger.info("{} '{}' to '{}'".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newname))
           try:
             if this.del_orig.get() == "1":
               os.rename(event.src_path, newname)

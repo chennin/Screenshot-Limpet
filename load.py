@@ -152,6 +152,8 @@ def journal_entry( cmdr: str, is_beta: bool, system: str, station: str, entry: D
       stop_observer()
     elif entry['event'].lower() == 'startup':
       start_observer()
+    # Keep track of updates as they come in, as this plugin is not directly
+    # concerned with Screenshot events, but needs the info for renaming
     this.cmdr = cmdr
     this.system = system
     this.station = station

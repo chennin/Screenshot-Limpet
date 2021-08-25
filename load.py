@@ -63,12 +63,12 @@ def plugin_start3(plugin_dir: str) -> str:
    logger.info(f"{appname}.{plugin_name} loading!")
    this.in_loc = tk.StringVar(value=config.get_str("AS_INPUT"))
    if this.in_loc is None or this.in_loc.get() == "":
-     this.in_loc = tk.StringVar(value="%userprofile%\Videos\Elite Dangerous")
+     this.in_loc = tk.StringVar(value='%userprofile%\\Videos\\Elite Dangerous')
      config.set("AS_INPUT", this.in_loc.get())
 
    this.out_loc = tk.StringVar(value=config.get_str("AS_OUTPUT"))
    if this.out_loc is None or this.out_loc.get() == "":
-     this.out_loc = tk.StringVar(value="%userprofile%\Pictures\Frontier Developments\Elite Dangerous")
+     this.out_loc = tk.StringVar(value='%userprofile%\\Pictures\\Frontier Developments\\Elite Dangerous')
      config.set("AS_OUTPUT", this.out_loc.get())
 
    this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))

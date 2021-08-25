@@ -33,7 +33,7 @@ def check_all_dirs_exist():
       if not check_dir_exists(directory):
         message += "Directory '{}' does not exist!\n".format(directory)
 	# Keep a multi-line message, but only log one error per directory checked
-        logger.error(message.splitlines[-1])
+        logger.error(message.splitlines()[-1])
 
     update_status(message)
     return message == ""

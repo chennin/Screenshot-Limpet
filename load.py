@@ -1,19 +1,49 @@
 import os, sys
 from config import appname, config
 from monitor import monitor
-from watchdog.events import FileSystemEventHandler, FileCreatedEvent, LoggingEventHandler
+from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 import tkinter as tk
 from tkinter import ttk
 import myNotebook as nb
 from typing import Optional, Tuple, Dict, Any
+from datetime import datetime
 import logging
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
 this = sys.modules[__name__]
 status: Optional[tk.Label]
-observer = Observer()
+observer = None
+this.cmdr = "default-cmdr"
+this.system = "unknown-system"
+this.body = "unknown-body"
+this.station = None
+
+class ImgHandler(PatternMatchingEventHandler):
+    def __init__(self):
+        PatternMatchingEventHandler.__init__(self, patterns=['*.png', '*.jpg', '.bmp'], ignore_directories=True, case_sensitive=False)
+
+    def on_created(self, event):
+        if event.src_path.lower().endswith('.png'):
+          logger.info("New image detected {}".format(event.src_path))
+          date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
+          number = 1
+          while True:
+            newname = "{}/{} {} ({}) {}.png".format(this.out_loc.get(), this.system, this.station if station else this.body, this.cmdr, f'{number:05}')
+            if os.path.isfile(newname):
+              number += 1
+            else:
+              break
+          logger.info("New name is {}".format(newname))
+          try:
+            if this.del_orig.get() == "1":
+              os.rename(event.src_path, newname)
+            else:
+              from shutil import copyfile
+              copyfile(event.src_path, newname)
+          except Exception as e:
+            logger.error(e)
 
 def check_dir_exists(directory):
     return os.path.isdir(directory)
@@ -30,7 +60,6 @@ def check_all_dirs_exist():
     return message == ""
 
 def plugin_start3(plugin_dir: str) -> str:
-   global observer
    logger.info(f"{appname}.{plugin_name} loading!")
    this.in_loc = tk.StringVar(value=config.get_str("AS_INPUT"))
    if this.in_loc is None or this.in_loc.get() == "":
@@ -41,6 +70,8 @@ def plugin_start3(plugin_dir: str) -> str:
    if this.out_loc is None or this.out_loc.get() == "":
      this.out_loc = tk.StringVar(value="%userprofile%\Pictures\Frontier Developments\Elite Dangerous")
      config.set("AS_OUTPUT", this.out_loc.get())
+
+   this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))
 
    return "Any Screenshot"
 
@@ -60,25 +91,34 @@ def plugin_prefs(parent, cmdr, is_beta):
     output_entry = nb.Entry(frame, textvariable=this.out_loc)
     output_entry.grid(padx=10, row=1, column=1, columnspan=2, ipadx=60, sticky=tk.W)
 
+    nb.Checkbutton(frame, text="Delete Original File", variable=this.del_orig).grid(padx=10, row=2, column=0, sticky=tk.W)
+
     return frame
 
 def start_observer():
-    event_handler = LoggingEventHandler()
+    global observer
+    logger.info("Starting image observer")
+    event_handler = ImgHandler()
     observer = Observer()
     observer.schedule(event_handler, this.in_loc.get(), recursive=False)
     observer.start()
+    update_status("Started")
 
 def stop_observer():
     global observer
+    logging.info("Stopping image observer")
     if observer is not None and observer.is_alive():
       observer.stop()
       observer.join()
+    update_status("Stopped")
 
 def prefs_changed(cmdr, is_beta):
+    logger.info("Detected prefs change")
     config.set("AS_INPUT", this.in_loc.get())
     config.set("AS_OUTPUT", this.out_loc.get())
+    config.set("AS_DELORIG", this.del_orig.get())
     stop_observer()
-    if check_all_dirs_exist() and monitor.game_running():
+    if check_all_dirs_exist():# and monitor.game_running():
       start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
@@ -99,15 +139,12 @@ def plugin_stop() -> None:
     stop_observer()
 
 def journal_entry( cmdr: str, is_beta: bool, system: str, station: str, entry: Dict[str, Any], state: Dict[str, Any]) -> None:
-    global observer
-    observer.join(0.1)
     if entry['event'].lower() == 'shutdown' or monitor.game_running == False:
       stop_observer()
-      update_status("Stopped")
     elif entry['event'].lower() == 'startup':
       start_observer()
-      update_status("Started")
-
-def dashboard_entry(cmdr: str, is_beta: bool, entry: Dict[str, Any]):
-    global observer
-    observer.join(0.1)
+    this.cmdr = cmdr
+    this.system = system
+    this.station = station
+    if state["Body"]:
+      this.body = state["Body"]

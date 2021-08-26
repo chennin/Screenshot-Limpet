@@ -36,12 +36,17 @@ class ImgHandler(PatternMatchingEventHandler):
           number = 1
           while True:
             newname = "{} {} ({}) {}.{}".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}', suffix)
+            keepcharacters = (' ','.','_')
+            newname = "".join(c for c in newname if c.isalnum() or c in keepcharacters).rstrip()
+
             newpath = "{}/{}".format(this.out_loc.get(), newname)
             if os.path.isfile(newpath):
               number += 1
             else:
               break
+
           logger.info("{} '{}' to '{}'".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newpath))
+
           try:
             if this.del_orig.get() == "1":
               os.rename(event.src_path, newpath)

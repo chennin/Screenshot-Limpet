@@ -8,6 +8,7 @@ from ttkHyperlinkLabel import HyperlinkLabel
 import myNotebook as nb
 from typing import Optional, Tuple, Dict, Any
 from datetime import datetime
+import time
 import logging
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -33,6 +34,13 @@ class ImgHandler(PatternMatchingEventHandler):
           logger.debug("New image detected {}".format(event.src_path))
           suffix = event.src_path.lower()[-3:]
           date = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
+
+          # Wait until the file size stops changing as a workaround for not being able to know when the file is closed for writing
+          oldSize = -1
+          while (oldSize != os.path.getsize(event.src_path)):
+             oldSize = os.path.getsize(event.src_path)
+             time.sleep(0.2)
+
           number = 1
           while True:
             newname = "{} {} ({}) {}.{}".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}', suffix)

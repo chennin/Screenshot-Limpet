@@ -165,7 +165,7 @@ def plugin_stop() -> None:
 def journal_entry( cmdr: str, is_beta: bool, system: str, station: str, entry: Dict[str, Any], state: Dict[str, Any]) -> None:
     if entry['event'].lower() == 'shutdown' or monitor.game_running == False:
       stop_observer()
-    elif entry['event'].lower() == 'startup':
+    elif entry['event'].lower() in [ 'startup', 'loadgame' ]:
       start_observer()
     # Keep track of updates as they come in, as this plugin is not directly
     # concerned with Screenshot events, but needs the info for renaming

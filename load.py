@@ -15,7 +15,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
 this = sys.modules[__name__]
-VERSION = 0.8
+VERSION = 0.9
 
 this.status: Optional[tk.Label]
 this.message = ""

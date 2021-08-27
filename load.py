@@ -28,9 +28,7 @@ class ImgHandler(PatternMatchingEventHandler):
     def __init__(self):
         PatternMatchingEventHandler.__init__(self, patterns=['*.png', '*.jpg', '.bmp'], ignore_directories=True, case_sensitive=False)
 
-    def on_any_event(self, event):
-        logger.debug("FS Event: {}".format(event.event_type))
-    def on_closed(self, event):
+    def on_created(self, event):
         if event.src_path.lower().endswith( ('.png', '.jpg') ) :
           logger.debug("New image detected {}".format(event.src_path))
           suffix = event.src_path.lower()[-3:]

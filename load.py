@@ -28,6 +28,8 @@ class ImgHandler(PatternMatchingEventHandler):
     def __init__(self):
         PatternMatchingEventHandler.__init__(self, patterns=['*.png', '*.jpg', '.bmp'], ignore_directories=True, case_sensitive=False)
 
+    def on_any_event(self, event):
+        logger.debug("FS Event: {}".format(event.event_type))
     def on_closed(self, event):
         if event.src_path.lower().endswith( ('.png', '.jpg') ) :
           logger.debug("New image detected {}".format(event.src_path))
@@ -75,7 +77,7 @@ def check_all_dirs_exist():
       this.message = message
       this.status.event_generate('<<AnySSStatus>>', when="tail")
 
-    return message == ""
+    return message == default
 
 def plugin_start3(plugin_dir: str) -> str:
    logger.info(f"{appname}.{plugin_name} loading!")

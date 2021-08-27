@@ -157,8 +157,8 @@ def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
     return (label, this.status)
 
 def update_status(event=None) -> None:
-    logger.debug("Updating status text to: {}".format(this.message))
     if not config.shutting_down:
+      logger.debug("Updating status text to: {}".format(this.message))
       this.status["text"] = this.message
 
 def plugin_stop() -> None:

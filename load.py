@@ -86,7 +86,7 @@ def check_all_dirs_exist():
     return message == default
 
 def plugin_start3(plugin_dir: str) -> str:
-   logger.info(f"{appname}.{plugin_name} loading!")
+   logger.info(f"{appname}.{plugin_name} {VERSION} loading!")
    this.in_loc = tk.StringVar(value=config.get_str("AS_INPUT"))
    if this.in_loc is None or this.in_loc.get() == "":
      this.in_loc = tk.StringVar(value = os.path.expanduser( os.path.expandvars( '%userprofile%\\Videos\\Elite Dangerous' ) ) )

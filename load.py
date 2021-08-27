@@ -121,13 +121,14 @@ def plugin_prefs(parent, cmdr, is_beta):
 
 def start_observer():
     global observer
-    logger.info("Starting image observer")
-    event_handler = ImgHandler()
-    observer = Observer()
-    observer.schedule(event_handler, this.in_loc.get(), recursive=False)
-    observer.start()
-    this.message = "Started"
-    this.status.event_generate('<<AnySSStatus>>', when="tail")
+    if check_all_dirs_exist() == True and monitor.game_running() == True and ( observer is None or not observer.is_alive() ):
+      logger.info("Starting image observer")
+      event_handler = ImgHandler()
+      observer = Observer()
+      observer.schedule(event_handler, this.in_loc.get(), recursive=False)
+      observer.start()
+      this.message = "Started"
+      this.status.event_generate('<<AnySSStatus>>', when="tail")
 
 def stop_observer():
     global observer
@@ -146,8 +147,7 @@ def prefs_changed(cmdr, is_beta):
     config.set("AS_OUTPUT", this.out_loc.get() )
     config.set("AS_DELORIG", this.del_orig.get())
     stop_observer()
-    if check_all_dirs_exist() and monitor.game_running():
-      start_observer()
+    start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
     label = tk.Label(parent, text="Any Screenshot")

@@ -43,7 +43,7 @@ class ImgHandler(PatternMatchingEventHandler):
 
           number = 1
           while True:
-            newname = "{} {} ({}) {}.{}".format(this.system, this.station if station else this.body, this.cmdr, f'{number:05}', suffix)
+            newname = "{}{} ({}) {}.{}".format(this.body if this.body else this.system, " " + this.station if station else "", this.cmdr, f'{number:05}', suffix)
             keepcharacters = (' ','.','_','+','-','(',')',',','#','\'')
             newname = "".join(c for c in newname if c.isalnum() or c in keepcharacters).rstrip()
 

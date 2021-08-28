@@ -61,7 +61,7 @@ class ImgHandler(PatternMatchingEventHandler):
             else:
               from shutil import copyfile
               copyfile(event.src_path, newpath)
-            this.message = "Successfully {} screenshot with new name:\n{}".format("moved" if this.del_orig.get() == "1" else "copied", newname)
+            this.message = "({}) Successfully {} screenshot with new name:\n{}".format(datetime.now().strftime('%H:%M:%S'), "moved" if this.del_orig.get() == "1" else "copied", newname)
           except Exception as e:
             this.message = "Error: {}".format(e)
             logger.error(e)

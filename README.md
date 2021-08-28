@@ -1,9 +1,10 @@
 # Beta (0.9) release
 
-This plugin watches an arbitrary directory, for example Nvidia Geforce Experience's Elite: Dangerous screenshot directory, for new images, and renames them and moves them in to your usual Elite: Dangerous screenshot directory.
+This plugin watches an arbitrary directory, for example NVIDIA Geforce Experience's Elite: Dangerous screenshot directory, for new images, and renames them and moves them in to your usual Elite: Dangerous screenshot directory.
+
+One reason to use this is if you use ReShade or NVIDIA Freestyle: Hitting F10 will _not_ yield a picture that matches what you are seeing. Instead, you can hit Alt+F2 (for NVIDIA) and then this plugin will move that screenshot to be with your other screenshots, wherever you want.
 
 For a friendlier and fancier plugin that watches ED's screenshots only, see [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot/releases)
 
-Default Nvidia GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`
-
-Default Elite: Dangerous screenshot directory: `%userprofile%\Pictures\Frontier Developments\Elite Dangerous`
+* Default NVIDIA GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`
+* Default Elite: Dangerous screenshot directory: `%userprofile%\Pictures\Frontier Developments\Elite Dangerous`

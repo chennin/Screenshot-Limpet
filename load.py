@@ -180,5 +180,13 @@ def journal_entry( cmdr: str, is_beta: bool, system: str, station: str, entry: D
     this.cmdr = cmdr
     this.system = system
     this.station = station
-    if state["Body"]:
-      this.body = state["Body"]
+#    if state["Body"]:
+#      this.body = state["Body"]
+#    else:
+#      this.body = None
+
+def dashboard_entry(cmdr: str, is_beta: bool, entry: Dict[str, Any]):
+    if entry and "BodyName" in entry:
+      this.body = entry["BodyName"]
+    else:
+      this.body = None

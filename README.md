@@ -4,6 +4,8 @@ This plugin watches an arbitrary directory, for example NVIDIA Geforce Experienc
 
 One reason to use this is if you use ReShade or NVIDIA Freestyle: Hitting F10 will _not_ yield a picture that matches what you are seeing. Instead, you can hit Alt+F2 (for NVIDIA) and then this plugin will move that screenshot to be with your other screenshots, wherever you want.
 
+**Requires EDMC 5.1.0 or above**
+
 For a friendlier and fancier plugin that watches ED's screenshots only, see [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot/releases)
 
 * Default NVIDIA GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`

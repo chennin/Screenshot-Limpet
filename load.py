@@ -1,5 +1,5 @@
 import os, sys
-from config import appname, config
+from config import appname, config, appversion
 from monitor import monitor
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
@@ -8,6 +8,7 @@ from ttkHyperlinkLabel import HyperlinkLabel
 import myNotebook as nb
 from typing import Optional, Tuple, Dict, Any
 from datetime import datetime
+import semantic_version
 import time
 import logging
 
@@ -98,6 +99,16 @@ def plugin_start3(plugin_dir: str) -> str:
      config.set("AS_OUTPUT", this.out_loc.get())
 
    this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))
+
+    # Check EDMC core version
+    if isinstance(appversion, str):
+        core_version = semantic_version.Version(appversion)
+
+    elif callable(appversion):
+        core_version = appversion()
+
+    if core_version < semantic_version.Version('5.1.0'):
+        logger.warn('EDMC should be updated to at least 5.1.0 for best results')
 
    return "Any Screenshot"
 

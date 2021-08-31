@@ -100,15 +100,15 @@ def plugin_start3(plugin_dir: str) -> str:
 
    this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))
 
-    # Check EDMC core version
-    if isinstance(appversion, str):
-        core_version = semantic_version.Version(appversion)
+   # Check EDMC core version
+   if isinstance(appversion, str):
+       core_version = semantic_version.Version(appversion)
 
-    elif callable(appversion):
-        core_version = appversion()
+   elif callable(appversion):
+       core_version = appversion()
 
-    if core_version < semantic_version.Version('5.1.0'):
-        logger.warn('EDMC should be updated to at least 5.1.0 for best results')
+   if core_version < semantic_version.Version('5.1.0'):
+       logger.warn('EDMC should be updated to at least 5.1.0 for best results')
 
    return "Any Screenshot"
 

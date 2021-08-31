@@ -8,5 +8,11 @@ One reason to use this is if you use ReShade or NVIDIA Freestyle: Hitting F10 wi
 
 For a friendlier and fancier plugin that watches ED's screenshots only, see [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot/releases)
 
+# Features
+
+* Move and rename screenshots from any directory (examples: NVIDIA's, Steam's) to any other directory
+
+## Notes
+
 * Default NVIDIA GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`
 * Default Elite: Dangerous screenshot directory: `%userprofile%\Pictures\Frontier Developments\Elite Dangerous`

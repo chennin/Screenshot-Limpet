@@ -1,4 +1,5 @@
 import os, sys
+from shutil import move, copy2
 from config import appname, config, appversion
 from monitor import monitor
 from watchdog.events import PatternMatchingEventHandler
@@ -58,10 +59,9 @@ class ImgHandler(PatternMatchingEventHandler):
 
           try:
             if this.del_orig.get() == "1":
-              os.rename(event.src_path, newpath)
+              move(event.src_path, newpath)
             else:
-              from shutil import copyfile
-              copyfile(event.src_path, newpath)
+              copy2(event.src_path, newpath)
             this.message = "({}) Successfully {} screenshot with new name:\n{}".format(datetime.now().strftime('%H:%M:%S'), "moved" if this.del_orig.get() == "1" else "copied", newname)
           except Exception as e:
             this.message = "Error: {}".format(e)

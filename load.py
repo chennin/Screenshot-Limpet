@@ -17,7 +17,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
 this = sys.modules[__name__]
-VERSION = 0.91
+VERSION = 0.92
 
 this.status: Optional[tk.Label]
 this.message = ""
@@ -67,7 +67,7 @@ class ImgHandler(PatternMatchingEventHandler):
             this.message = "Error: {}".format(e)
             logger.error(e)
           finally:
-            this.status.event_generate('<<AnySSStatus>>', when="tail")
+            this.status.event_generate('<<SLStatus>>', when="tail")
 
 def check_dir_exists(directory):
     return os.path.isdir(directory)
@@ -82,7 +82,7 @@ def check_all_dirs_exist():
 
     if message != default:
       this.message = message
-      this.status.event_generate('<<AnySSStatus>>', when="tail")
+      this.status.event_generate('<<SLStatus>>', when="tail")
 
     return message == default
 
@@ -110,13 +110,13 @@ def plugin_start3(plugin_dir: str) -> str:
    if core_version < semantic_version.Version('5.1.0'):
        logger.warn('EDMC should be updated to at least 5.1.0 for best results')
 
-   return "Any Screenshot"
+   return "Screenshot Limpet"
 
 def plugin_prefs(parent, cmdr, is_beta):
     frame = nb.Frame(parent)
     frame.columnconfigure(3, weight=1)
 
-    HyperlinkLabel(frame, text=plugin_name, background=nb.Label().cget('background'), url='https://github.com/chennin/EDMC-Any-Screenshot', \
+    HyperlinkLabel(frame, text=plugin_name, background=nb.Label().cget('background'), url='https://github.com/chennin/Screenshot-Limpet', \
       underline=True).grid(row=0, columnspan=2, padx=10, sticky=tk.W)
     nb.Label(frame, text = 'Version {}'.format(VERSION)).grid(row=0, column=2, padx=10, sticky=tk.E)
 
@@ -145,7 +145,7 @@ def start_observer():
       observer.schedule(event_handler, this.in_loc.get(), recursive=False)
       observer.start()
       this.message = "Started"
-      this.status.event_generate('<<AnySSStatus>>', when="tail")
+      this.status.event_generate('<<SLStatus>>', when="tail")
 
 def stop_observer():
     global observer
@@ -154,7 +154,7 @@ def stop_observer():
       observer.stop()
       observer.join()
     this.message = "Stopped"
-    this.status.event_generate('<<AnySSStatus>>', when="tail")
+    this.status.event_generate('<<SLStatus>>', when="tail")
 
 def prefs_changed(cmdr, is_beta):
     logger.debug("Detected prefs change")
@@ -167,9 +167,9 @@ def prefs_changed(cmdr, is_beta):
     start_observer()
 
 def plugin_app(parent: tk.Frame) -> Tuple[tk.Label, tk.Label]:
-    label = tk.Label(parent, text="Any Screenshot")
+    label = tk.Label(parent, text="Screenshot Limpet")
     this.status = tk.Label(parent, text="")
-    this.status.bind_all('<<AnySSStatus>>', update_status)
+    this.status.bind_all('<<SLStatus>>', update_status)
 
     return (label, this.status)
 

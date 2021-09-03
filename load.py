@@ -43,17 +43,7 @@ class ImgHandler(PatternMatchingEventHandler):
              oldSize = os.path.getsize(event.src_path)
              time.sleep(0.2)
 
-          number = 1
-          while True:
-            newname = "{}{} ({}) {}.{}".format(this.body if this.body else this.system, " " + this.station if station else "", this.cmdr, f'{number:05}', suffix)
-            keepcharacters = (' ','.','_','+','-','(',')',',','#','\'')
-            newname = "".join(c for c in newname if c.isalnum() or c in keepcharacters).rstrip()
-
-            newpath = "{}/{}".format(this.out_loc.get(), newname)
-            if os.path.isfile(newpath):
-              number += 1
-            else:
-              break
+          newpath = getFileMask(this.system, this.body, this.station, this.cmdr, date, suffix)
 
           logger.info("{} '{}' to '{}'".format("Moving" if this.del_orig.get() == "1" else "Copying", event.src_path, newpath))
 
@@ -68,6 +58,36 @@ class ImgHandler(PatternMatchingEventHandler):
             logger.error(e)
           finally:
             this.status.event_generate('<<SLStatus>>', when="tail")
+
+def getFileMask(system, body, station, cmdr, date, suffix):
+    newpath = ""
+    number = 1
+    newname = this.mask.get() + suffix
+
+    if station:
+      newname = newname.replace('SYSTEM', f"{system} {station}")
+    elif body:
+      newname = newname.replace('SYSTEM', f"{body}")
+    else:
+      newname = newname.replace('SYSTEM', f"{system}")
+    newname = newname.replace('DATE', date)
+    newname = newname.replace('CMDR', cmdr)
+
+    while True:
+      if number > 99999:
+        logger.warn("Too many files, replacing with date to avoid an infinite loop")
+        newname = newname.replace('NNNNN', 'NNNNN' + date)
+        number = 1
+      else:
+        newname = newname.replace('NNNNN', f'{number:05}')
+      keepcharacters = (' ','.','_','+','-','(',')',',','#','\'')
+      newname = "".join(c for c in newname if c.isalnum() or c in keepcharacters).rstrip()
+
+      newpath = "{}/{}".format(this.out_loc.get(), newname)
+      if os.path.isfile(newpath):
+        number += 1
+      else:
+        return newpath
 
 def check_dir_exists(directory):
     return os.path.isdir(directory)
@@ -99,6 +119,13 @@ def plugin_start3(plugin_dir: str) -> str:
      config.set("AS_OUTPUT", this.out_loc.get())
 
    this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))
+
+   if config.get_str("AS_MASK"):
+      this.mask = tk.StringVar(value=config.get_str("AS_MASK"))
+   elif config.get_str("Mask"): # Take EDMC-Screenshot's if available
+      this.mask = tk.StringVar(value=config.get_str("AS_MASK").replace(".png", ""))
+   else:
+      this.mask = tk.StringVar(value="SYSTEM BODY (CMDR) NNNNN")
 
    # Check EDMC core version
    if isinstance(appversion, str):
@@ -132,9 +159,38 @@ def plugin_prefs(parent, cmdr, is_beta):
     output_entry = nb.Entry(frame, textvariable=this.out_loc)
     output_entry.grid(padx=10, row=3, column=1, columnspan=2, ipadx=60, sticky=tk.W)
 
-    nb.Checkbutton(frame, text="Delete Original File", variable=this.del_orig).grid(padx=10, row=5, column=0, sticky=tk.W)
+    Masks = [
+        "SYSTEM BODY (CMDR) NNNNN",
+        "SYSTEM BODY (CMDR) DATE",
+        "SYSTEM(BODY)_NNNNN",
+        "SYSTEM(BODY)_DATE",
+        "SYSTEM(CMDR)_NNNNN",
+        "SYSTEM(CMDR)_DATE",
+        "BODY(CMDR)_NNNNN",
+        "BODY(CMDR)_DATE",
+        "SYSTEM_(BODY)_CMDR_NNNNN",
+        "SYSTEM_(BODY)_CMDR_DATE",
+        "DATE SYSTEM BODY (CMDR)",
+        "DATE_SYSTEM_(BODY)_CMDR",
+    ]
+    this.maskVar = tk.StringVar(frame)
+    if this.mask.get():
+        this.maskVar.set(this.mask.get())
+    else:
+        this.maskVar.set(Masks[0])
+
+    popLabel = nb.Label(frame, text="File Mask")
+    popupTypes = tk.OptionMenu(frame, this.maskVar, *Masks)
+    maskVar.trace('w', change_mask)
+    popupTypes.grid(row=5, column=1, columnspan=2, sticky=tk.W)
+    popLabel.grid(padx=10, row=5, column=0, sticky=tk.W)
+
+    nb.Checkbutton(frame, text="Delete Original File", variable=this.del_orig).grid(padx=10, row=7, column=0, sticky=tk.W)
 
     return frame
+
+def change_mask(*args):
+    this.mask.set(this.maskVar.get())
 
 def start_observer():
     global observer
@@ -163,6 +219,7 @@ def prefs_changed(cmdr, is_beta):
     config.set("AS_INPUT", this.in_loc.get() )
     config.set("AS_OUTPUT", this.out_loc.get() )
     config.set("AS_DELORIG", this.del_orig.get())
+    config.set("AS_MASK", this.maskVar.get())
     stop_observer()
     start_observer()
 

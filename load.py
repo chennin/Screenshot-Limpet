@@ -62,14 +62,17 @@ class ImgHandler(PatternMatchingEventHandler):
 def getFileMask(system, body, station, cmdr, date, suffix):
     newpath = ""
     number = 1
-    newname = this.mask.get() + suffix
+    newname = this.mask.get() + "." + suffix
 
     if station:
-      newname = newname.replace('SYSTEM', f"{system} {station}")
+      newname = newname.replace('SYSTEM', f"{system}")
+      newname = newname.replace('BODY', f"{station}")
     elif body:
+      newname = newname.replace('BODY', f"")
       newname = newname.replace('SYSTEM', f"{body}")
     else:
       newname = newname.replace('SYSTEM', f"{system}")
+      newname = newname.replace('BODY', f"")
     newname = newname.replace('DATE', date)
     newname = newname.replace('CMDR', cmdr)
 

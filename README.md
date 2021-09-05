@@ -1,6 +1,6 @@
 # Screenshot Limpet, a plugin for Elite: Dangerous Market Connector
 
-## Beta (0.92) release
+## Beta (0.93) release
 
 This [EDMC](https://github.com/EDCD/EDMarketConnector/) plugin watches an arbitrary directory, for example NVIDIA Geforce Experience's Elite: Dangerous screenshot directory, for new images, and renames them and moves them to another folder, for example your usual Elite: Dangerous screenshot directory.
 

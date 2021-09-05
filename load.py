@@ -17,7 +17,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f'{appname}.{plugin_name}')
 
 this = sys.modules[__name__]
-VERSION = 0.92
+VERSION = 0.93
 
 this.status: Optional[tk.Label]
 this.message = ""
@@ -125,10 +125,24 @@ def plugin_start3(plugin_dir: str) -> str:
      config.set("AS_OUTPUT", this.out_loc.get())
 
    this.del_orig = tk.StringVar(value=config.get_str("AS_DELORIG"))
+   this.Masks = [
+       "SYSTEM BODY (CMDR) NNNNN",
+       "SYSTEM BODY (CMDR) DATE",
+       "SYSTEM(BODY)_NNNNN",
+       "SYSTEM(BODY)_DATE",
+       "SYSTEM(CMDR)_NNNNN",
+       "SYSTEM(CMDR)_DATE",
+       "BODY(CMDR)_NNNNN",
+       "BODY(CMDR)_DATE",
+       "SYSTEM_(BODY)_CMDR_NNNNN",
+       "SYSTEM_(BODY)_CMDR_DATE",
+       "DATE SYSTEM BODY (CMDR)",
+       "DATE_SYSTEM_(BODY)_CMDR",
+   ]
 
    if config.get_str("AS_MASK"):
       this.mask = tk.StringVar(value=config.get_str("AS_MASK"))
-   elif config.get_str("Mask"): # Take EDMC-Screenshot's if available
+   elif config.get_str("Mask") and config.get_str("Mask") in this.Masks: # Take EDMC-Screenshot's if available
       this.mask = tk.StringVar(value=config.get_str("Mask").replace(".png", ""))
    else:
       this.mask = tk.StringVar(value="SYSTEM BODY (CMDR) NNNNN")
@@ -165,20 +179,6 @@ def plugin_prefs(parent, cmdr, is_beta):
     output_entry = nb.Entry(frame, textvariable=this.out_loc)
     output_entry.grid(padx=10, row=3, column=1, columnspan=2, ipadx=60, sticky=tk.W)
 
-    Masks = [
-        "SYSTEM BODY (CMDR) NNNNN",
-        "SYSTEM BODY (CMDR) DATE",
-        "SYSTEM(BODY)_NNNNN",
-        "SYSTEM(BODY)_DATE",
-        "SYSTEM(CMDR)_NNNNN",
-        "SYSTEM(CMDR)_DATE",
-        "BODY(CMDR)_NNNNN",
-        "BODY(CMDR)_DATE",
-        "SYSTEM_(BODY)_CMDR_NNNNN",
-        "SYSTEM_(BODY)_CMDR_DATE",
-        "DATE SYSTEM BODY (CMDR)",
-        "DATE_SYSTEM_(BODY)_CMDR",
-    ]
     this.maskVar = tk.StringVar(frame)
     if this.mask.get():
         this.maskVar.set(this.mask.get())

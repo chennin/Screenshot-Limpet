@@ -75,18 +75,21 @@ def getFileMask(system, body, station, cmdr, date, suffix):
       newname = newname.replace('BODY', f"")
     newname = newname.replace('DATE', date)
     newname = newname.replace('CMDR', cmdr)
+    # Replace contiguous spaces with 1
+    newname = " ".join(newname.split())
 
     while True:
+      tempname = newname
       if number > 99999:
         logger.warning("Too many files, replacing with date to avoid an infinite loop")
-        newname = newname.replace('NNNNN', 'NNNNN' + date)
+        tempname = tempname.replace('NNNNN', 'NNNNN ' + date)
         number = 1
       else:
-        newname = newname.replace('NNNNN', f'{number:05}')
+        tempname = tempname.replace('NNNNN', f'{number:05}')
       keepcharacters = (' ','.','_','+','-','(',')',',','#','\'')
-      newname = "".join(c for c in newname if c.isalnum() or c in keepcharacters).rstrip()
+      tempname = "".join(c for c in tempname if c.isalnum() or c in keepcharacters).rstrip()
 
-      newpath = "{}/{}".format(this.out_loc.get(), newname)
+      newpath = "{}/{}".format(this.out_loc.get(), tempname)
       if os.path.isfile(newpath):
         number += 1
       else:

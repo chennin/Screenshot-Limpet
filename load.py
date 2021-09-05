@@ -78,7 +78,7 @@ def getFileMask(system, body, station, cmdr, date, suffix):
 
     while True:
       if number > 99999:
-        logger.warn("Too many files, replacing with date to avoid an infinite loop")
+        logger.warning("Too many files, replacing with date to avoid an infinite loop")
         newname = newname.replace('NNNNN', 'NNNNN' + date)
         number = 1
       else:

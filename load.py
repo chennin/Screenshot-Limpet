@@ -52,7 +52,7 @@ class ImgHandler(PatternMatchingEventHandler):
               move(event.src_path, newpath)
             else:
               copy2(event.src_path, newpath)
-            this.message = "({}) Successfully {} screenshot with new name:\n{}".format(datetime.now().strftime('%H:%M:%S'), "moved" if this.del_orig.get() == "1" else "copied", newname)
+            this.message = "({}) Successfully {} screenshot with new name:\n{}".format(datetime.now().strftime('%H:%M:%S'), "moved" if this.del_orig.get() == "1" else "copied", os.path.basename(newpath) )
           except Exception as e:
             this.message = "Error: {}".format(e)
             logger.error(e)

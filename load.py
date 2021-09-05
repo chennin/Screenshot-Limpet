@@ -123,7 +123,7 @@ def plugin_start3(plugin_dir: str) -> str:
    if config.get_str("AS_MASK"):
       this.mask = tk.StringVar(value=config.get_str("AS_MASK"))
    elif config.get_str("Mask"): # Take EDMC-Screenshot's if available
-      this.mask = tk.StringVar(value=config.get_str("AS_MASK").replace(".png", ""))
+      this.mask = tk.StringVar(value=config.get_str("Mask").replace(".png", ""))
    else:
       this.mask = tk.StringVar(value="SYSTEM BODY (CMDR) NNNNN")
 

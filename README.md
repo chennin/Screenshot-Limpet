@@ -12,9 +12,11 @@ One reason to use this is if you use ReShade or NVIDIA Freestyle: Hitting F10 wi
 # Features
 
 * Move and rename screenshots from any directory (examples: NVIDIA's, Steam's) to any other directory.
+* Rename screenshots according to one of many patterns (compatible with EDMC-Screenshot)
 
 ## Notes
 
 * Default NVIDIA GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`
 * Default Elite: Dangerous screenshot directory: `%userprofile%\Pictures\Frontier Developments\Elite Dangerous`
 * For a friendlier and fancier plugin that watches ED's screenshots only, see [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot/releases)
+* Linux is supported (but reshade mods will obviously be different)

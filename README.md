@@ -16,6 +16,7 @@ One reason to use this is if you use ReShade or NVIDIA Freestyle: Hitting F10 wi
 
 ## Notes
 
+* This plugin (currently) does NOT convert from bmp to png or anything else
 * Default NVIDIA GeForce Experience screenshot directory: `%userprofile%\Videos\Elite Dangerous`
 * Default Elite: Dangerous screenshot directory: `%userprofile%\Pictures\Frontier Developments\Elite Dangerous`
 * For a friendlier and fancier plugin that watches ED's screenshots only, see [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot/releases)

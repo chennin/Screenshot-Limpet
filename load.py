@@ -86,7 +86,7 @@ def getFileMask(system, body, station, cmdr, date, suffix):
         number = 1
       else:
         tempname = tempname.replace('NNNNN', f'{number:05}')
-      keepcharacters = (' ','.','_','+','-','(',')',',','#','\'')
+      keepcharacters = (' ','.','_','+','-','(',')',',','#','\'','*','/')
       tempname = "".join(c for c in tempname if c.isalnum() or c in keepcharacters).rstrip()
 
       newpath = "{}/{}".format(this.out_loc.get(), tempname)
